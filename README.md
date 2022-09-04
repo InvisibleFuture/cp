@@ -29,7 +29,8 @@ python3 main.py
 ```bash
 
 # 生成文件
-pip freeze > requirements.txt
+pip install pipreqs
+pipreqs . --encoding=utf8 --force
 
 ```
 

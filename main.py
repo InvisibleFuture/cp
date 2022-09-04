@@ -21,6 +21,8 @@ def ai(text:str, callback):
     .replace('吧', '')\
     .replace('有', '没有')\
     .replace('是不是', '是')\
+    .replace('能不能', '能')\
+    .replace('行不行', '行')\
     .replace('怎么样', '挺好的')\
     .replace('因为', '其实')\
     .replace('吧', '')\
@@ -28,6 +30,7 @@ def ai(text:str, callback):
     .replace('我', '我也')\
     .replace('你', '我')\
     .replace('啊', '呀')\
+    .replace('嘿', '嘻')\
     .replace('喵', '汪')\
     .replace('？', '！')
   if data != text: callback(data)

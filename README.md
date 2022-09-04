@@ -28,7 +28,7 @@ python3 main.py
 
 ```bash
 
-# 生成文件
+# 生成依赖文件
 pip install pipreqs
 pipreqs . --encoding=utf8 --force
 

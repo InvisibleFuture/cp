@@ -23,7 +23,7 @@ def get_author_urls():
 
 # 输入作者主页链接, 正则获取 'https://weibo.com/' 与 '?' 之间的作者ID
 def get_author_id(url):
-  author_id = re.findall(r'(?<=https://weibo.com/)\w+', url)
+  author_id = re.findall(r'(?<=https://weibo.com/u/)\w+', url)
   if author_id:
     author_id = author_id[0]
   else:
@@ -65,22 +65,37 @@ def get_weibo_data(author_ids):
       print(len(list))
       weibo_data.append(list)
       page += 1
+
+      # 顺便更新作者数据
+      if page == 2 and len(list) > 0:
+        user = list[0]['user']
+        up = store.user.update({'id': user['id']}, store.where('id') == user['id'])
+        if len(up) == 0: store.user.insert({'id': user['id']})
+        print(len(up), user['id'], '更新作者数据', user['screen_name'])
   return weibo_data
 
+def get_weibo_count():
+  return store.weibo.count(store.where('id') > 0)
+
+def get_user_count():
+  return store.user.count(store.where('id') > 0)
+
+# 获取博主数据存入数据库
+def update_weibo():
+  author_urls = get_author_urls()
+  author_ids  = get_author_ids(author_urls)
+  weibo_data  = get_weibo_data(author_ids)
+  for list in weibo_data:
+    for item in list:
+      up = store.weibo.update(item, store.where('id') == item['id'])
+      if len(up) == 0: store.weibo.insert(item)
+      print(len(up), item['id'], item['text_raw'][:20].replace('\n', ''))
 
 # 每 10 分钟检查一次
 def updateWeibo():
   while True:
     time.sleep(600)
-    # 获取博主数据存入数据库
-    author_urls = get_author_urls()
-    author_ids  = get_author_ids(author_urls)
-    weibo_data  = get_weibo_data(author_ids)
-    for list in weibo_data:
-      for item in list:
-        up = store.weibo.update(item, store.where('id') == item['id'])
-        if len(up) == 0: store.weibo.insert(item)
-        print(len(up), item['id'], item['text_raw'][:20].replace('\n', ''))
+    update_weibo()
 
 
 client   = requests.Session()
